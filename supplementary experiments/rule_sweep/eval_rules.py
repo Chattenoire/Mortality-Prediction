@@ -1,7 +1,5 @@
-#!/usr/bin/env python
 """
-Evaluate CORELS & FRL best models on the *held-out* test set and compare to
-FedFNN (metrics must already be stored in outputs/FedFNN_best/metrics.json).
+Evaluate CORELS & FRL best models on the held-out test set and compare to FedFNN.
 Produces:
   • rule_models_test.json   (metrics & rule stats)
   • comparison_stats.json   (DeLong p, bootstrap CI)
@@ -34,7 +32,7 @@ for name, mdl in models.items():
     results[name] = res
 
 json.dump(results, open("models/rule_models_test.json", "w"), indent=2)
-print("✓ Saved test metrics for CORELS & FRL")
+print("Saved test metrics for CORELS & FRL")
 
 # ---- comparison with FedFNN best ---------------------------------------- #
 fedf = json.load(open("../outputs/FedFNN_best/metrics.json"))   # adjust path
@@ -54,4 +52,4 @@ for name, mdl in models.items():
     )
 
 json.dump(comp, open("models/comparison_stats.json", "w"), indent=2)
-print("✓ Saved DeLong + bootstrap comparison with FedFNN")
+print("Saved DeLong + bootstrap comparison with FedFNN")
