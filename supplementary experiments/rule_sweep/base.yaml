@@ -2,19 +2,18 @@
 seed: 42
 
 dataset:
-  # use quotes and either double backslashes or forward slashes
-  path: "C:\\Graduation Project\\dataset\\preprocessed_data_enriched.pkl"
+  path: "PATH_TO_FILE\\preprocessed_data_enriched.pkl"
   client_splits: "data/client_splits.json"
 
 federated:
   method: FedAvg
-  rounds: 200                      # keep same as main study
+  rounds: 200
   clients_per_round: 5
 
 model:
   gru_units: 224
   dropout: 0.2
-  lambda_val: 12.5                 # soft-min temperature
+  lambda_val: 12.5
 
 optimiser:
   name: Adam
@@ -30,7 +29,7 @@ training:
     min_delta: 0.001
 
 evaluation:
-  n_bins_ece: 15                   # finer for journal plot
+  n_bins_ece: 15
 
 logging:
   project: "rule_length_sweep"
