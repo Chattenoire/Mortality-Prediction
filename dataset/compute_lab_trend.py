@@ -1,95 +1,80 @@
+# ---------------------------------------------------------------------
+#  FedFNN-ERL – Compute lab-value slopes (trends)
+#  Copyright (c) 2024  Po-Kang Tsai & Wen-June Wang
+#  Licensed under the Apache License, Version 2.0
+# ---------------------------------------------------------------------
+#  Requires:  ENV MIMIC_IV_DATA  → root directory that contains /hosp
+#             ENV FEDFNN_OUTDIR  → output directory for derived CSVs
+# ---------------------------------------------------------------------
+
+from __future__ import annotations
 import os
+from pathlib import Path
 import pandas as pd
 import numpy as np
 from scipy.stats import linregress
 
-# ------------------------------
-# Define Paths
-# ------------------------------
-BASE_DIR = r"C:\Graduation Project\dataset\mimic-iv"
-HOSP_DIR = os.path.join(BASE_DIR, "hosp")
-LABEVENTS_FILE = os.path.join(HOSP_DIR, "labevents.csv.gz")
-OUTPUT_TREND_FILE = os.path.join(BASE_DIR, "lab_trends_extended.csv")
+# ---------- configurable paths ----------------------------------------------------
 
-# ------------------------------
-# Define ITEMIDs for lab variables
-# ------------------------------
-# Use the validated ITEMIDs based on your investigation.
-BILIRUBIN_ITEMIDS = [50838, 50883, 50884, 50885, 51028, 51049, 51464, 51465, 51568, 51569, 51570, 51783, 51812, 51932, 51966, 53089]
-CREATININE_ITEMIDS = [50841, 50912, 51021, 51032, 51052, 51067, 51070, 51073, 51080, 51081, 51082, 51099, 51106, 51787, 51937, 51963, 51977, 52000, 52024, 52546]
-LACTATE_ITEMIDS = [50813, 52442, 53154]
-PLATELET_ITEMIDS = [51240]
+DATA_ROOT = Path(os.getenv("MIMIC_IV_DATA", "/path/to/mimic-iv")).expanduser()
+OUT_DIR = Path(os.getenv("FEDFNN_OUTDIR", "./fedfnn_output")).expanduser()
+OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# ------------------------------
-# Function to compute slope for a given group of measurements
-# ------------------------------
-def compute_slope(group, value_col, time_col):
-    """
-    Compute the slope of lab values over time using linear regression.
-    If there is no variability in the time variable, returns 0.0.
-    """
-    # Ensure the group is sorted by the time column
-    group = group.sort_values(time_col)
-    # Convert time column to datetime and calculate hours since ICU admission
-    hours = group['hours_since_intime']
-    values = group[value_col].astype(float)
-    
-    # If there is only one unique time value, linear regression is not feasible.
-    if hours.nunique() == 1:
+LABEVENTS_FILE = DATA_ROOT / "hosp" / "labevents.csv.gz"
+OUTPUT_FILE = OUT_DIR / "lab_trends_extended.csv"
+
+# ---------- ITEMID sets -----------------------------------------------------------
+
+BILIRUBIN_ITEMIDS = [...]
+CREATININE_ITEMIDS = [...]
+LACTATE_ITEMIDS = [...]
+PLATELET_ITEMIDS = [...]
+
+# ---------- helpers ---------------------------------------------------------------
+
+
+def _slope(group: pd.DataFrame) -> float:
+    """Return slope of valuenum over hours_since_intime, or 0.0 if not computable."""
+    group = group.sort_values("hours_since_intime")
+    hours = group["hours_since_intime"].values
+    values = group["valuenum"].astype(float).values
+    if np.unique(hours).size == 1:
         return 0.0
     try:
-        slope, _, _, _, _ = linregress(hours, values)
-        return slope
-    except Exception as e:
+        return linregress(hours, values).slope
+    except Exception:
         return 0.0
 
-# ------------------------------
-# Main processing: compute lab trends per hadm_id for multiple labs
-# ------------------------------
-print("Loading labevents data...")
-labevents = pd.read_csv(LABEVENTS_FILE, compression='gzip')
 
-# Before computing slopes, ensure that 'charttime' is converted to datetime.
-labevents['charttime'] = pd.to_datetime(labevents['charttime'])
-labevents['intime'] = labevents.groupby('hadm_id')['charttime'].transform('min')
-# Compute hours since ICU admission
-labevents['hours_since_intime'] = (labevents['charttime'] - labevents['intime']).dt.total_seconds() / 3600.0
-
-# Function to compute slopes for a given lab type
-def compute_lab_slope(lab_itemids, value_name):
-    lab_events = labevents[labevents["itemid"].isin(lab_itemids)].copy()
-    # Drop rows without necessary time or value information
-    lab_events.dropna(subset=["charttime", "valuenum", "hours_since_intime"], inplace=True)
-    # Group by hadm_id and compute slope for each group
-    slopes = lab_events.groupby("hadm_id").apply(
-        lambda g: compute_slope(g, "valuenum", "charttime")
-    ).reset_index(name=f"{value_name}_slope")
+def _compute_lab_slope(df: pd.DataFrame,
+                       itemids: list[int],
+                       name: str) -> pd.DataFrame:
+    tmp = df[df["itemid"].isin(itemids)].dropna(
+        subset=["valuenum", "hours_since_intime"])
+    slopes = (tmp.groupby("hadm_id")
+                  .apply(_slope)
+                  .reset_index(name=f"{name}_slope"))
     return slopes
 
-print("Computing bilirubin slopes...")
-bilirubin_slopes = compute_lab_slope(BILIRUBIN_ITEMIDS, "bilirubin")
 
-print("Computing creatinine slopes...")
-creatinine_slopes = compute_lab_slope(CREATININE_ITEMIDS, "creatinine")
+# ---------- main ------------------------------------------------------------------
 
-print("Computing lactate slopes...")
-lactate_slopes = compute_lab_slope(LACTATE_ITEMIDS, "lactate")
+print("Loading labevents (this may take a while)…")
+labs = pd.read_csv(LABEVENTS_FILE, compression="gzip",
+                   usecols=["hadm_id", "itemid", "valuenum", "charttime"])
+labs["charttime"] = pd.to_datetime(labs["charttime"])
+labs["intime"] = labs.groupby("hadm_id")["charttime"].transform("min")
+labs["hours_since_intime"] = (labs["charttime"] - labs["intime"]).dt.total_seconds() / 3600
 
-print("Computing platelet slopes...")
-platelet_slopes = compute_lab_slope(PLATELET_ITEMIDS, "platelets")
+print("Computing lab slopes…")
+bil = _compute_lab_slope(labs, BILIRUBIN_ITEMIDS, "bilirubin")
+cre = _compute_lab_slope(labs, CREATININE_ITEMIDS, "creatinine")
+lac = _compute_lab_slope(labs, LACTATE_ITEMIDS, "lactate")
+plt = _compute_lab_slope(labs, PLATELET_ITEMIDS, "platelets")
 
-# ------------------------------
-# Merge all slopes together on hadm_id
-# ------------------------------
-print("Merging lab trends...")
-lab_trends = pd.merge(bilirubin_slopes, creatinine_slopes, on="hadm_id", how="outer")
-lab_trends = pd.merge(lab_trends, lactate_slopes, on="hadm_id", how="outer")
-lab_trends = pd.merge(lab_trends, platelet_slopes, on="hadm_id", how="outer")
+lab_trends = bil.merge(cre, how="outer").merge(lac, how="outer").merge(plt, how="outer")
+lab_trends.fillna(0, inplace=True)
 
-# Impute missing slopes with 0 (alternative imputation strategies can be used)
-for col in ["bilirubin_slope", "creatinine_slope", "lactate_slope", "platelets_slope"]:
-    lab_trends[col].fillna(0, inplace=True)
-
-print(f"Computed lab trends for {lab_trends.shape[0]} hospital admissions.")
-lab_trends.to_csv(OUTPUT_TREND_FILE, index=False)
-print("Extended lab trend features saved to:", OUTPUT_TREND_FILE)
+print(f"Computed slopes for {lab_trends.shape[0]} admissions.")
+lab_trends.to_csv(OUTPUT_FILE, index=False)
+print("Saved →", OUTPUT_FILE)
