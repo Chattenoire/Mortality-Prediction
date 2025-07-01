@@ -13,7 +13,7 @@ np.random.seed(42)
 tf.random.set_seed(42)
 
 ##############################################################################
-# 1. GLOBAL CONFIG & BEST HYPERPARAMS (FROM CENTRALIZED LSTM)
+# 1. GLOBAL CONFIG & BEST HYPERPARAMS
 ##############################################################################
 CONFIG = {
     "num_clients": 5,
@@ -87,7 +87,7 @@ def main():
     # ------------------------------
     # A) LOAD & PREPARE DATA
     # ------------------------------
-    data_path = r"C:\Graduation Project\dataset\preprocessed_data_enriched.pkl"
+    data_path = r"PATH_TO_FILE\preprocessed_data_enriched.pkl"
     with open(data_path, "rb") as f:
         preprocessed = pickle.load(f)
     X_ts, X_static, y = preprocessed["X_ts"], preprocessed["X_static"], preprocessed["y"]
@@ -106,15 +106,11 @@ def main():
     feature_dim = ts_dim + static_dim
 
     # Build feature names for SHAP explanation:
-    ts_feature_names = ['HeartRate', 'SysBP', 'DiasBP', 'MeanBP', 'RespRate', 'SpO2', 'Temperature', 
-                          'WBC', 'Hemoglobin', 'Platelets', 'Sodium', 'Potassium', 'Chloride', 'BUN', 
-                          'Creatinine', 'Glucose', 'Arterial_pH', 'Arterial_Lactate']
+    ts_feature_names = [
+        ......
+    ]
     static_feature_names = [
-        'age', 'gender', 'Myocardial_Infarction', 'Congestive_Heart_Failure', 'Peripheral_Vascular_Disease',
-        'Cerebrovascular_Disease', 'Dementia', 'Chronic_Pulmonary_Disease', 'Rheumatologic_Disease',
-        'Peptic_Ulcer_Disease', 'Mild_Liver_Disease', 'Diabetes', 'Diabetes_with_Complications',
-        'Hemiplegia', 'Moderate_to_Severe_Renal_Disease', 'Any_Malignancy',
-        'Moderate_to_Severe_Liver_Disease', 'Metastatic_Solid_Tumor', 'AIDS'
+        ......
     ]
     ts_feature_names_full = [f"{var}_t{t+1}" for t in range(time_steps) for var in ts_feature_names]
     input_feature_names = ts_feature_names_full + static_feature_names
@@ -190,7 +186,7 @@ def main():
     plt.close()
     print("AUC plot saved as 'auc_over_time_fedavg_lstm.png'")
     
-    model_save_path = r"C:\Graduation Project\saved models\federated_fedavg_lstm"
+    model_save_path = r"PATH_TO_FILE\federated_fedavg_lstm"
     os.makedirs(os.path.dirname(model_save_path), exist_ok=True)
     global_model.save(model_save_path, save_format="tf")
     print(f"Model saved to: {model_save_path}")
