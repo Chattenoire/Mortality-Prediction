@@ -9,7 +9,6 @@ from sklearn.cluster import KMeans
 import shap
 import matplotlib.pyplot as plt
 
-# Import your augmentation code (assumed available)
 from time_series_augmentation import augment_minority_randomwarp
 
 # Suppress TensorFlow warnings
@@ -28,7 +27,7 @@ CONFIG = {
     "local_epochs": 2,
 }
 
-# Best hyperparameters (from your prior run)
+# Best hyperparameters
 BEST_HPS = {
     "t_norm_method": "softmin",
     "lambda_val": 12.5,
@@ -40,17 +39,11 @@ BEST_HPS = {
 
 # Feature Mapping
 static_feature_names = [
-    'age', 'gender', 'Myocardial_Infarction', 'Congestive_Heart_Failure', 'Peripheral_Vascular_Disease',
-    'Cerebrovascular_Disease', 'Dementia', 'Chronic_Pulmonary_Disease', 'Rheumatologic_Disease',
-    'Peptic_Ulcer_Disease', 'Mild_Liver_Disease', 'Diabetes', 'Diabetes_with_Complications',
-    'Hemiplegia', 'Moderate_to_Severe_Renal_Disease', 'Any_Malignancy',
-    'Moderate_to_Severe_Liver_Disease', 'Metastatic_Solid_Tumor', 'AIDS'
+    ......
 ]
 
 ts_feature_names = [
-    'HeartRate', 'SysBP', 'DiasBP', 'MeanBP', 'RespRate', 'SpO2', 'Temperature', 'WBC',
-    'Hemoglobin', 'Platelets', 'Sodium', 'Potassium', 'Chloride', 'BUN', 'Creatinine',
-    'Glucose', 'Arterial_pH', 'Arterial_Lactate'
+    ......
 ]
 
 static_feature_count = len(static_feature_names)
@@ -246,7 +239,7 @@ def interpret_fuzzy_rules(model, rule_feature_names, top_features=None):
 # ------------------------------
 def main():
     # Load enriched data
-    data_path = r"C:\Graduation Project\dataset\preprocessed_data_enriched.pkl"
+    data_path = r"PATH_TO_FILE\preprocessed_data_enriched.pkl"
     with open(data_path, "rb") as f:
         preprocessed = pickle.load(f)
     
@@ -349,7 +342,7 @@ def main():
     print("AUC over time plot saved as 'auc_over_time.png'")
     
     # Save the trained model
-    model_save_path = r"C:\Graduation Project\saved models\federated_fedfnn_withERL"
+    model_save_path = r"PATH_TO_FILE\federated_fedfnn_withERL"
     os.makedirs(os.path.dirname(model_save_path), exist_ok=True)
     global_model.save(model_save_path, save_format="tf")
     print(f"Model saved to: {model_save_path}")
