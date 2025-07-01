@@ -1,3 +1,4 @@
+# 15rules_fedprox.yaml
 seed: 42
 defaults: [15rules_fedavg]
 algorithm: FedProx
