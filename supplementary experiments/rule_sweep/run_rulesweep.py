@@ -1,6 +1,5 @@
-#!/usr/bin/env python
 """
-Launches the 12-config sweep (detached subprocess per job).
+Launches the 12-config sweep
 """
 import itertools, subprocess, yaml, os, pathlib
 
