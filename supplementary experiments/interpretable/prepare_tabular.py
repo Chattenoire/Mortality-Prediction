@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """
 Convert preprocessed_data_enriched.pkl → tabular_train.parquet / tabular_test.parquet
-The split follows the 80/20 stratified rule you used in FedFNN experiments.
 """
 import pickle, numpy as np, pandas as pd, os, argparse
 from sklearn.model_selection import train_test_split
@@ -48,7 +47,7 @@ def main(pkl_path, out_dir):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pkl",  default=r"C:\Graduation Project\dataset\preprocessed_data_enriched.pkl")
-    ap.add_argument("--out",  default=r"C:\Graduation Project\dataset")
+    ap.add_argument("--pkl",  default=r"PATH_TO_FILE\preprocessed_data_enriched.pkl")
+    ap.add_argument("--out",  default=r"PATH")
     args = ap.parse_args()
     main(args.pkl, args.out)
