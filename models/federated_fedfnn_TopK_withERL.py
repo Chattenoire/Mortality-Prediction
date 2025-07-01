@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 # Import your augmentation code
 from time_series_augmentation import augment_minority_randomwarp
 
-# Suppress TensorFlow warnings (optional)
+# Suppress TensorFlow warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # Set random seeds for reproducibility
@@ -27,7 +27,7 @@ CONFIG = {
     "local_epochs": 2,
 }
 
-# Best hyperparameters (from your prior run)
+# Best hyperparameters
 BEST_HPS = {
     "t_norm_method": "softmin",
     "lambda_val": 12.5,
@@ -41,55 +41,15 @@ BEST_HPS = {
 # Feature Names
 # ------------------------------
 static_feature_names = [
-    'age', 'gender', 'Myocardial_Infarction', 'Congestive_Heart_Failure', 'Peripheral_Vascular_Disease',
-    'Cerebrovascular_Disease', 'Dementia', 'Chronic_Pulmonary_Disease', 'Rheumatologic_Disease',
-    'Peptic_Ulcer_Disease', 'Mild_Liver_Disease', 'Diabetes', 'Diabetes_with_Complications',
-    'Hemiplegia', 'Moderate_to_Severe_Renal_Disease', 'Any_Malignancy',
-    'Moderate_to_Severe_Liver_Disease', 'Metastatic_Solid_Tumor', 'AIDS'
+    ......
 ]
 
 ts_feature_names = [
-    'HeartRate', 'SysBP', 'DiasBP', 'MeanBP', 'RespRate', 'SpO2', 'Temperature', 'WBC',
-    'Hemoglobin', 'Platelets', 'Sodium', 'Potassium', 'Chloride', 'BUN', 'Creatinine',
-    'Glucose', 'Arterial_pH', 'Arterial_Lactate'
+    ......
 ]
 
 static_feature_count = len(static_feature_names)
-
-# ------------------------------
-# (NEW) Define Which Features to Keep
-# ------------------------------
-# The fuzzy layer sees the concatenation of [GRU_output (224) + static_feats (19)] = 243 dims.
-#
-# In our full-feature SHAP run (where we concatenated global_shap_ts and global_shap_static),
-# we obtained a 37-length vector:
-#   - indices 0..17 correspond to time-series features (raw order)
-#   - indices 18..36 correspond to static features.
-#
-# Suppose your full-feature top-k list was:
-#    [17, 16, 15, 9, 14, 19, 29, 33, 23, 32]
-#
-# To map these into the fuzzy layer’s 243-dim space:
-#  - For any index < 18, we assume a naive 1-to-1 mapping into the GRU embedding (i.e. local index remains the same).
-#  - For any index >= 18, subtract 18 to get the static offset, then add 224.
-#
-# Thus, we transform:
-#   17 -> 17        (time-series)
-#   16 -> 16        (time-series)
-#   15 -> 15        (time-series)
-#    9 -> 9         (time-series)
-#   14 -> 14        (time-series)
-#   19 -> (19-18)+224 = 225
-#   29 -> (29-18)+224 = 235
-#   33 -> (33-18)+224 = 239
-#   23 -> (23-18)+224 = 229
-#   32 -> (32-18)+224 = 238
-#
-# Final top_k_indices for the fuzzy layer:
 top_k_indices = [17, 16, 15, 9, 14, 225, 235, 239, 229, 238]
-
-# If you want to use ALL features (the old way), set top_k_indices = None
-# top_k_indices = None
 
 # ------------------------------
 # Custom Metric: SigmoidAUC
@@ -198,7 +158,7 @@ class FuzzyRuleLayer(tf.keras.layers.Layer):
         return firing, consequent
 
 # ------------------------------
-# (UPDATED) FedFNNModel
+# FedFNNModel
 # ------------------------------
 class FedFNNModel(tf.keras.Model):
     """
@@ -295,7 +255,7 @@ def create_fuzzy_model(ts_input_dim, static_input_dim, hps, top_k_indices=None):
     return model
 
 # ------------------------------
-# Evolutionary Rule Learning (unchanged)
+# Evolutionary Rule Learning
 # ------------------------------
 def evolve_rules(model, client_datasets, contrib_threshold=0.05, round_num=None, total_rounds=30):
     firing_strengths_all = []
@@ -327,7 +287,7 @@ def evolve_rules(model, client_datasets, contrib_threshold=0.05, round_num=None,
     return active_rules
 
 # ------------------------------
-# Federated Aggregation (unchanged)
+# Federated Aggregation
 # ------------------------------
 def aggregate_models(global_model, client_models, client_sizes):
     global_weights = global_model.get_weights()
@@ -344,7 +304,7 @@ def aggregate_models(global_model, client_models, client_sizes):
     return global_model
 
 # ------------------------------
-# (UPDATED) Interpret Fuzzy Rules
+# Interpret Fuzzy Rules
 # ------------------------------
 def interpret_fuzzy_rules(model, rule_feature_names, top_features=None):
     """
@@ -448,7 +408,7 @@ def main():
     # Validation dataset
     val_dataset = tf.data.Dataset.from_tensor_slices(((X_ts_val, X_static_val), y_val)).batch(32)
 
-    # (UPDATED) Initialize global model with top_k_indices
+    # Initialize global model with top_k_indices
     global_model = create_fuzzy_model(
         ts_input_dim=X_ts.shape[2],
         static_input_dim=X_static.shape[1],
@@ -617,31 +577,7 @@ def main():
     feature_importance = np.concatenate([global_shap_ts, global_shap_static])
     top_indices = np.argsort(feature_importance)[::-1][:10]  # Top 10 features overall (global indices from the 37-length array)
     print("Top 5 features (global indices):", top_indices)
-
-    # IMPORTANT: For interpreting fuzzy rules, we need to convert global indices
-    # from the 37-length space into the local (top_k) space of the fuzzy layer.
-    # In our updated fuzzy layer, the static part is mapped to indices in [224,242] and
-    # the time-series part remains in [0,223]. The stored top_k_indices in the fuzzy layer
-    # (i.e. in each rule) are the transformed values.
-    #
-    # If you want to interpret only those fuzzy parameters that were chosen in your new model,
-    # you can pass a filtering list that consists of the stored global indices.
-    #
-    # For example, we want to interpret the fuzzy rules for those features whose global index appears in our top_indices.
-    #
-    # Since our top_k_indices (the one passed to the model) is already in the 243-based space,
-    # we need to use that list for filtering.
-    #
-    # Therefore, we pass the model's stored top_k_indices as the filter.
-    #
-    # Extract the global top_k_indices from one rule (they are the same for all rules)
     global_topk = global_model.fuzzy_rules[0].top_k_indices.numpy()
-    # Now, find the intersection of global_topk and our top_indices (adjusting for the fact that our top_indices
-    # originally came from a 37-length array; here, for static, the mapping is: static_global = (original_static - 18) + 224)
-    # For time-series, we assume a 1-to-1 mapping.
-    #
-    # For simplicity, we will form a filter list by taking all indices from our fuzzy layer top_k_indices that
-    # appear in our new model. That is, we simply use the full local space [0, 1, ..., K-1].
     local_filter = None  # meaning, interpret all fuzzy parameters (local indices 0..K-1)
     
     print("\nInterpreting rules with top fuzzy features:")
