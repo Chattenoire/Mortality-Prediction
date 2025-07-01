@@ -11,7 +11,7 @@ from sklearn.metrics import confusion_matrix, classification_report, f1_score, r
 import matplotlib.pyplot as plt
 import shap
 
-# Set device (GPU if available)
+# Set device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
@@ -51,15 +51,11 @@ def load_and_preprocess_data():
     feature_dim = ts_dim + static_dim
 
     # Build feature names for SHAP visualization
-    ts_feature_names = ['HeartRate', 'SysBP', 'DiasBP', 'MeanBP', 'RespRate', 'SpO2', 'Temperature',
-                          'WBC', 'Hemoglobin', 'Platelets', 'Sodium', 'Potassium', 'Chloride', 'BUN',
-                          'Creatinine', 'Glucose', 'Arterial_pH', 'Arterial_Lactate']
+    ts_feature_names = [
+        ......
+    ]
     static_feature_names = [
-        'age', 'gender', 'Myocardial_Infarction', 'Congestive_Heart_Failure', 'Peripheral_Vascular_Disease',
-        'Cerebrovascular_Disease', 'Dementia', 'Chronic_Pulmonary_Disease', 'Rheumatologic_Disease',
-        'Peptic_Ulcer_Disease', 'Mild_Liver_Disease', 'Diabetes', 'Diabetes_with_Complications',
-        'Hemiplegia', 'Moderate_to_Severe_Renal_Disease', 'Any_Malignancy',
-        'Moderate_to_Severe_Liver_Disease', 'Metastatic_Solid_Tumor', 'AIDS'
+        ......
     ]
     # Note: In the RETAIN model, we use the combined input (time-series + static)
     ts_feature_names_full = [f"{var}_t{t+1}" for t in range(time_steps) for var in ts_feature_names]
@@ -303,15 +299,11 @@ def main():
     X_explain_avg = np.mean(X_explain, axis=1)
     
     # Build aggregated feature names: time-series features are aggregated (avg_{var}) then static features.
-    ts_feature_names = ['HeartRate', 'SysBP', 'DiasBP', 'MeanBP', 'RespRate', 'SpO2', 'Temperature',
-                          'WBC', 'Hemoglobin', 'Platelets', 'Sodium', 'Potassium', 'Chloride', 'BUN',
-                          'Creatinine', 'Glucose', 'Arterial_pH', 'Arterial_Lactate']
+    ts_feature_names = [
+        ......
+    ]
     static_feature_names = [
-        'age', 'gender', 'Myocardial_Infarction', 'Congestive_Heart_Failure', 'Peripheral_Vascular_Disease',
-        'Cerebrovascular_Disease', 'Dementia', 'Chronic_Pulmonary_Disease', 'Rheumatologic_Disease',
-        'Peptic_Ulcer_Disease', 'Mild_Liver_Disease', 'Diabetes', 'Diabetes_with_Complications',
-        'Hemiplegia', 'Moderate_to_Severe_Renal_Disease', 'Any_Malignancy',
-        'Moderate_to_Severe_Liver_Disease', 'Metastatic_Solid_Tumor', 'AIDS'
+        ......
     ]
     aggregated_ts_names = [f"avg_{var}" for var in ts_feature_names]
     aggregated_feature_names = np.array(aggregated_ts_names + static_feature_names)
@@ -323,7 +315,7 @@ def main():
     print("SHAP summary plot saved as 'shap_summary_plot_retain.png'")
     
     # Save the RETAIN model state
-    MODEL_SAVE_DIR = r"C:\Graduation Project\saved models\interpretation_retain"
+    MODEL_SAVE_DIR = r"PATH_TO_FILE\interpretation_retain"
     os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
     MODEL_SAVE_PATH = os.path.join(MODEL_SAVE_DIR, "interpretation_retain.pkl")
     torch.save(model.state_dict(), MODEL_SAVE_PATH)
