@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 """
 Moderate-depth CORELS search compatible with very old corels-py builds.
-
-• 100 k stratified subsample
-• 4-bin one-hot → dense int8
-• χ² top-200 bins  (≈ 800 binary cols)
-• Grid:  c ∈ {0.002, 0.01, 0.05},  max_card = 3
-• Each fit:  n_iter = 2 000 000  AND hard 20-min wall-time
+- 100 k stratified subsample
+- 4-bin one-hot → dense int8
+- χ² top-200 bins  (≈ 800 binary cols)
+- Grid:  c ∈ {0.002, 0.01, 0.05},  max_card = 3
+- Each fit:  n_iter = 2 000 000  AND hard 20-min wall-time
 Outputs
   models/corels_best.joblib
   models/corels_val_metrics.json
@@ -18,7 +17,7 @@ from sklearn.preprocessing import KBinsDiscretizer
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.metrics import roc_auc_score
 import corels
-from utils import rule_stats     # already defined in your utils.py
+from utils import rule_stats
 
 # ── helper --------------------------------------------------------------- #
 def stratified_subsample(df, n, seed):
@@ -65,7 +64,7 @@ for c_val in grid_c:
     )
     mdl.fit(X_tr, y_tr)
 
-    # hard wall-time safety net (15 min per fit)
+    # hard wall-time safety net
     if time.perf_counter() - fit_start > 900:
         print("  fit exceeded 15 min — using model as-is.")
 
