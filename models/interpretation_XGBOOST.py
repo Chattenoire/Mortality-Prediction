@@ -13,7 +13,7 @@ import shap
 # 1. Load & Preprocess Data
 # ------------------------------
 def load_and_preprocess_data():
-    DATA_PATH = r"C:\Graduation Project\dataset\preprocessed_data_enriched.pkl"
+    DATA_PATH = r"PATH_TO_FILE\preprocessed_data_enriched.pkl"
     with open(DATA_PATH, "rb") as f:
         preprocessed = pickle.load(f)
     X_ts = preprocessed["X_ts"]      # shape: (N, T, ts_dim)
@@ -47,19 +47,17 @@ def main():
     # ------------------------------
     # 2. Train XGBoost Model
     # ------------------------------
-    # Specify eval_metric in the constructor and remove unsupported kwargs.
     xgb_model = xgb.XGBClassifier(
         n_estimators=1000,
         learning_rate=0.01,
         max_depth=6,
         subsample=0.8,
         colsample_bytree=0.8,
-        tree_method="hist",  # or "gpu_hist" if using GPU
+        tree_method="hist", 
         objective="binary:logistic",
         eval_metric="auc"
     )
     
-    # Remove early_stopping_rounds and evals_result because they're not supported.
     xgb_model.fit(
         X_train, y_train,
         eval_set=[(X_train, y_train), (X_val, y_val)],
@@ -67,7 +65,7 @@ def main():
     )
     
     # ------------------------------
-    # 3. Plot AUC Over Boosting Rounds (if available)
+    # 3. Plot AUC Over Boosting Rounds
     # ------------------------------
     try:
         evals_result = xgb_model.evals_result()
@@ -139,7 +137,7 @@ def main():
     # ------------------------------
     # 6. Save the XGBoost Model
     # ------------------------------
-    MODEL_SAVE_PATH_XGB = os.path.join(r"C:\Graduation Project\saved models\interpretation_XGBOOST", "interpretation_XGBOOST.pkl")
+    MODEL_SAVE_PATH_XGB = os.path.join(r"PATH_TO_FILE\interpretation_XGBOOST", "interpretation_XGBOOST.pkl")
     os.makedirs(os.path.dirname(MODEL_SAVE_PATH_XGB), exist_ok=True)
     joblib.dump(xgb_model, MODEL_SAVE_PATH_XGB)
     print(f"XGBoost model saved as '{MODEL_SAVE_PATH_XGB}'")
