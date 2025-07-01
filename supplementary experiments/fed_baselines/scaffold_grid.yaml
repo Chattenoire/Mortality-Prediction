@@ -1,0 +1,4 @@
+defaults: [sweepwin_fedavg.yaml]
+algorithm: SCAFFOLD
+grid:
+  lr: [0.02, 0.05, 0.1]   # server_lr = client_lr

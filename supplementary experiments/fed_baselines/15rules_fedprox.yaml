@@ -1,0 +1,14 @@
+# configs/15rules_fedprox.yaml
+seed: 42               # <-- add this line
+defaults: [15rules_fedavg]
+algorithm: FedProx
+mu: 0.01
+federated:
+  rounds: 100
+dataset:
+  path: "C:\\Graduation Project\\dataset\\preprocessed_data_enriched.pkl"
+num_rules: 15
+training:
+  batch_size: 32
+  client_lr: 1.8e-3
+num_clients: 5

@@ -1,0 +1,14 @@
+# sweepwin_fedavg.yaml
+defaults: []
+seed: 42
+algorithm: FedAvg
+num_clients: 5
+num_rules: 40
+max_k: 4
+training:
+  batch_size: 32
+  client_lr: 1.8e-3
+federated:
+  rounds: 100
+dataset:
+  path: "C:\\Graduation Project\\dataset\\preprocessed_data_enriched.pkl"
