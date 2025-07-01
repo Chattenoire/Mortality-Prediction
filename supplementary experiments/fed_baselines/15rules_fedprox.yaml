@@ -6,7 +6,7 @@ mu: 0.01
 federated:
   rounds: 100
 dataset:
-  path: "C:\\Graduation Project\\dataset\\preprocessed_data_enriched.pkl"
+  path: "PATH_TO_FILE\\preprocessed_data_enriched.pkl"
 num_rules: 15
 training:
   batch_size: 32
