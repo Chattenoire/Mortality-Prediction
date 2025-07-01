@@ -4,13 +4,10 @@ import numpy as np
 from sklearn.isotonic import IsotonicRegression
 from sklearn.metrics import brier_score_loss
 
-# 1) Find all your original prediction files
-npz_files = glob.glob(r"C:\Graduation Project\saved_prediction_results\pred_*.npz")
+npz_files = glob.glob(r"PATH_TO_FILE\pred_*.npz")
 
-out_dir = r"C:\Graduation Project"
+out_dir = r"PATH"
 os.makedirs(out_dir, exist_ok=True)
-
-print("Calibrating with isotonic regression...\n")
 
 for fp in npz_files:
     name = os.path.basename(fp).replace("pred_","").replace(".npz","")
@@ -31,6 +28,6 @@ for fp in npz_files:
     # 4) Save calibrated probabilities
     out_fp = os.path.join(out_dir, f"pred_{name}_calibrated.npz")
     np.savez(out_fp, y_true=y_true, y_prob=y_cal)
-    print(f"  → Saved calibrated preds to: {out_fp}\n")
+    print(f"Saved calibrated preds to: {out_fp}\n")
 
 print("All models calibrated.")
