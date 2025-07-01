@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Train ONE (k,R) model and write metrics.json + model/ directory.
 """
