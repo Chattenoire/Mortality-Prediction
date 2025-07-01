@@ -10,14 +10,14 @@ from sklearn.metrics import (
 from sklearn.calibration import calibration_curve
 
 # ——————————————————————————————————————————————————————————————
-# 配置：文件路径
+# File path
 # ——————————————————————————————————————————————————————————————
-base_dir = "C:\Graduation Project"
-pre_path  = os.path.join(r"C:\Graduation Project\saved_prediction_results\raw_results", "pred_FedFNN_noERL.npz")
-post_path = os.path.join(r"C:\Graduation Project\saved_prediction_results\calibrated_results", "pred_FedFNN_noERL_calibrated.npz")
+base_dir = "PATH"
+pre_path  = os.path.join(r"PATH_TO_FILE\raw_results", "pred_FedFNN_noERL.npz")
+post_path = os.path.join(r"PATH_TO_FILE\calibrated_results", "pred_FedFNN_noERL_calibrated.npz")
 
 # ——————————————————————————————————————————————————————————————
-# 载入数据
+# Load data
 # ——————————————————————————————————————————————————————————————
 def load_preds(fp):
     data = np.load(fp)
@@ -27,7 +27,7 @@ y_true_pre,  y_prob_pre  = load_preds(pre_path)
 y_true_post, y_prob_post = load_preds(post_path)
 
 # ——————————————————————————————————————————————————————————————
-# 计算指标
+# Metrics
 # ——————————————————————————————————————————————————————————————
 def compute_curves(y_true, y_prob, n_bins=10):
     # ROC
@@ -51,7 +51,7 @@ pre = compute_curves(y_true_pre,  y_prob_pre)
 post = compute_curves(y_true_post, y_prob_post)
 
 # ——————————————————————————————————————————————————————————————
-# 绘图：Figure 1（校前）和 Figure 2（校后）
+# Before vs. After
 # ——————————————————————————————————————————————————————————————
 for tag, stats in [("Figure 1. Pre‑calibration", pre), ("Figure 2. Post‑calibration", post)]:
     fig, axes = plt.subplots(1, 3, figsize=(15, 4))
