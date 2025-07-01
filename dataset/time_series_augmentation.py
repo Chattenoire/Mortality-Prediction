@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------
 #  FedFNN-ERL – Time-series augmentation utilities
-#  Copyright (c) 2024  Po-Kang Tsai & Wen-June Wang
+#  Copyright (c) 2025  Po-Kang Tsai
 #  Licensed under the Apache License, Version 2.0
 #  --------------------------------------------------------------------
 #  This file contains ONLY synthetic-data helpers and references no
