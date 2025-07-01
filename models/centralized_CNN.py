@@ -33,7 +33,7 @@ class SigmoidAUC(tf.keras.metrics.Metric):
 # 2. DATA LOADING & PREPROCESSING
 ##############################################################################
 def load_and_preprocess_data():
-    DATA_PATH = r"C:\Graduation Project\dataset\preprocessed_data_enriched.pkl"
+    DATA_PATH = r"PATH_TO_FILE\preprocessed_data_enriched.pkl"
     with open(DATA_PATH, "rb") as f:
         preprocessed = pickle.load(f)
     X_ts, X_static, y = preprocessed["X_ts"], preprocessed["X_static"], preprocessed["y"]
@@ -52,15 +52,11 @@ def load_and_preprocess_data():
     feature_dim = ts_dim + static_dim
 
     # Build feature names for SHAP visualization
-    ts_feature_names = ['HeartRate', 'SysBP', 'DiasBP', 'MeanBP', 'RespRate', 'SpO2', 'Temperature',
-                          'WBC', 'Hemoglobin', 'Platelets', 'Sodium', 'Potassium', 'Chloride', 'BUN',
-                          'Creatinine', 'Glucose', 'Arterial_pH', 'Arterial_Lactate']
+    ts_feature_names = [
+        ......
+    ]
     static_feature_names = [
-        'age', 'gender', 'Myocardial_Infarction', 'Congestive_Heart_Failure', 'Peripheral_Vascular_Disease',
-        'Cerebrovascular_Disease', 'Dementia', 'Chronic_Pulmonary_Disease', 'Rheumatologic_Disease',
-        'Peptic_Ulcer_Disease', 'Mild_Liver_Disease', 'Diabetes', 'Diabetes_with_Complications',
-        'Hemiplegia', 'Moderate_to_Severe_Renal_Disease', 'Any_Malignancy',
-        'Moderate_to_Severe_Liver_Disease', 'Metastatic_Solid_Tumor', 'AIDS'
+        ......
     ]
     ts_feature_names_full = [f"{var}_t{t+1}" for t in range(time_steps) for var in ts_feature_names]
     input_feature_names = ts_feature_names_full + static_feature_names
@@ -232,7 +228,7 @@ def main():
     print("SHAP summary plot saved as 'shap_summary_plot_cnn.png'")
     
     # G) Save the final model
-    model_save_path = r"C:\Graduation Project\saved models\centralized_cnn"
+    model_save_path = r"PATH_TO_FILE\centralized_cnn"
     os.makedirs(os.path.dirname(model_save_path), exist_ok=True)
     best_model.save(model_save_path, save_format="tf")
     print(f"Model saved to: {model_save_path}")
