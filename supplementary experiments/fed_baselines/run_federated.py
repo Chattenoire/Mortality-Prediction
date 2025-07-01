@@ -1,9 +1,5 @@
-#!/usr/bin/env python
 """
 Train ONE aggregation algorithm on ONE rule configuration.
-Examples
-  python run_federated.py --config configs/15rules_fedavg.yaml     --out outputs/15_FedAvg
-  python run_federated.py --config configs/sweepwin_fedprox.yaml   --out outputs/sw_FedProx
 """
 import argparse, json, pathlib, yaml, pickle, numpy as np, tensorflow as tf
 from sklearn.model_selection import train_test_split
