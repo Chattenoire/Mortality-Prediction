@@ -1,7 +1,6 @@
-#!/usr/bin/env python
 """
 Produce a concise textual summary of the rule-length × rule-count sweep.
-Reads the CSV/LaTeX files created by `analyse_rule_grid.py`.
+Reads the CSV/LaTeX files created by analyse_rule_grid.py.
 
 Outputs:
   • best configuration (k,R) w/ AUROC, Brier, ECE
@@ -41,7 +40,7 @@ delta_k = mean_k - mean_k.min()
 delta_R = mean_R - mean_R.min()
 
 # ------------------------------------------------------------------ #
-# 4) ANOVA sentence (Option A model w/out interaction)
+# 4) ANOVA sentence
 # ------------------------------------------------------------------ #
 row_k = anova.loc["C(k)"]
 row_R = anova.loc["C(R)"]
