@@ -7,8 +7,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 import shap
 import matplotlib.pyplot as plt
-
-# If you have a time_series_augmentation.py file for minority data augmentation:
 from time_series_augmentation import augment_minority_randomwarp
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress TensorFlow warnings
@@ -20,7 +18,7 @@ tf.random.set_seed(42)
 ##############################################################################
 CONFIG = {
     "num_clients": 5,
-    "federated_rounds": 30,     # Adjust as needed
+    "federated_rounds": 30,
     "local_epochs": 2
 }
 
@@ -35,17 +33,11 @@ BEST_HPS = {
 
 # Feature Mapping
 static_feature_names = [
-    'age', 'gender', 'Myocardial_Infarction', 'Congestive_Heart_Failure', 'Peripheral_Vascular_Disease',
-    'Cerebrovascular_Disease', 'Dementia', 'Chronic_Pulmonary_Disease', 'Rheumatologic_Disease',
-    'Peptic_Ulcer_Disease', 'Mild_Liver_Disease', 'Diabetes', 'Diabetes_with_Complications',
-    'Hemiplegia', 'Moderate_to_Severe_Renal_Disease', 'Any_Malignancy',
-    'Moderate_to_Severe_Liver_Disease', 'Metastatic_Solid_Tumor', 'AIDS'
+    ......
 ]
 
 ts_feature_names = [
-    'HeartRate', 'SysBP', 'DiasBP', 'MeanBP', 'RespRate', 'SpO2', 'Temperature', 'WBC',
-    'Hemoglobin', 'Platelets', 'Sodium', 'Potassium', 'Chloride', 'BUN', 'Creatinine',
-    'Glucose', 'Arterial_pH', 'Arterial_Lactate'
+    ......
 ]
 
 static_feature_count = len(static_feature_names)
@@ -211,7 +203,7 @@ def aggregate_models(global_model, client_models, client_sizes):
     return global_model
 
 ##############################################################################
-# 8. INTERPRET FUZZY RULES (as in federated_fedfnn_withERL.py)
+# 8. INTERPRET FUZZY RULES
 ##############################################################################
 def interpret_fuzzy_rules(model, rule_feature_names, top_features=None):
     """
@@ -250,7 +242,7 @@ def interpret_fuzzy_rules(model, rule_feature_names, top_features=None):
 ##############################################################################
 def main():
     # 8.1: DATA LOADING & PREPROCESSING
-    DATA_FILE = r"C:\Graduation Project\dataset\preprocessed_data_enriched.pkl"
+    DATA_FILE = r"PATH_TO_FILE\preprocessed_data_enriched.pkl"
     with open(DATA_FILE, "rb") as f:
         preprocessed = pickle.load(f)
     X_ts, X_static, y = preprocessed["X_ts"], preprocessed["X_static"], preprocessed["y"]
@@ -336,7 +328,7 @@ def main():
     plt.close()
     print("AUC over time plot saved as 'auc_over_time.png'")
     
-    model_save_path = r"C:\Graduation Project\saved models\federated_fedfnn_noERL"
+    model_save_path = r"PATH_TO_FILE\federated_fedfnn_noERL"
     os.makedirs(os.path.dirname(model_save_path), exist_ok=True)
     global_model.save(model_save_path, save_format="tf")
     print(f"Model saved to: {model_save_path}")
