@@ -1,3 +1,4 @@
+# 15rules_prox.yaml
 defaults: []
 seed: 42
 algorithm: FedAvg
