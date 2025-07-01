@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Moderate-depth CORELS search compatible with very old corels-py builds.
 - 100 k stratified subsample
