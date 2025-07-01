@@ -30,7 +30,7 @@ class RetainWrapper(nn.Module):
 # 1. Data Loading & Preprocessing
 ##############################################################################
 def load_and_preprocess_data():
-    DATA_PATH = r"C:\Graduation Project\dataset\preprocessed_data_enriched.pkl"
+    DATA_PATH = r"PATH_TO_FILE\preprocessed_data_enriched.pkl"
     with open(DATA_PATH, "rb") as f:
         preprocessed = pickle.load(f)
     X_ts = preprocessed["X_ts"]      # shape: (n_samples, T, ts_dim)
