@@ -1,4 +1,3 @@
-# interpretable/utils.py
 import numpy as np, pandas as pd, json, itertools, random
 from sklearn.calibration import calibration_curve
 
@@ -29,7 +28,6 @@ def paired_bootstrap(y_true, p1, p2, metric_fn, n=1000, seed=42):
     return np.median(diffs), np.percentile(diffs, [2.5, 97.5])
 
 # ---------- DeLong two-sample AUROC p-value ------------------------------- #
-# (thin wrapper around tqdm-ninja's implementation; copy-safe)
 from sklearn.metrics import roc_auc_score
 def delong_pvalue(y, p1, p2):
     from scipy import stats
