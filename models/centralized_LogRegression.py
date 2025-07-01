@@ -1,7 +1,7 @@
 import os
 import pickle
 import numpy as np
-import tensorflow as tf               # only for the same seed utilities
+import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -20,10 +20,10 @@ np.random.seed(42)
 tf.random.set_seed(42)
 
 ##############################################################################
-# 1. DATA LOADING  (identical to centralized_CNN.py)
+# 1. DATA LOADING
 ##############################################################################
 def load_and_preprocess_data():
-    DATA_PATH = r"C:\Graduation Project\dataset\preprocessed_data_enriched.pkl"
+    DATA_PATH = r"PATH_TO_FILE\preprocessed_data_enriched.pkl"
     with open(DATA_PATH, "rb") as f:
         preprocessed = pickle.load(f)
 
@@ -66,7 +66,7 @@ def train_and_evaluate():
 
     # Platt‑scaling (sigmoid) calibration on the fly
     clf = CalibratedClassifierCV(
-        estimator=base_clf,    # <-- renamed parameter
+        estimator=base_clf,
         method="sigmoid",
         cv=5
     )
@@ -105,7 +105,7 @@ def train_and_evaluate():
     print("ROC curve saved as 'roc_curve_logreg.png'")
 
     # save calibrated model
-    save_dir = r"C:\Graduation Project\saved models\centralized_logreg"
+    save_dir = r"PATH_TO_FILE\centralized_logreg"
     os.makedirs(save_dir, exist_ok=True)
     import joblib
     joblib.dump(clf, os.path.join(save_dir, "logreg_calibrated.pkl"))
