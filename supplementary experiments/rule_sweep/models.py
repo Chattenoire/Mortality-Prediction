@@ -34,7 +34,7 @@ class FedFNN(tf.keras.Model):
         h = self.gru1(ts)
         h = self.gru2(h)
         h = self.att([h, h])
-        h = tf.reduce_mean(h, axis=1)          # simple mean for demo
+        h = tf.reduce_mean(h, axis=1)
         h = self.drop(h, training=training)
 
         x = tf.concat([h, stat], axis=1)
