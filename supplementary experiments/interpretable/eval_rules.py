@@ -1,6 +1,5 @@
 """
-Evaluate CORELS & FRL best models on the held-out test set and compare to
-FedFNN (metrics must already be stored in outputs/FedFNN_best/metrics.json).
+Evaluate CORELS & FRL best models on the held-out test set and compare to FedFNN.
 Produces:
   • rule_models_test.json   (metrics & rule stats)
   • comparison_stats.json   (DeLong p, bootstrap CI)
