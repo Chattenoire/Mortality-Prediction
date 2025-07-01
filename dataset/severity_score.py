@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------
 #  FedFNN-ERL – Compute SOFA- and Charlson-style severity scores
-#  Copyright (c) 2024  Po-Kang Tsai & Wen-June Wang
+#  Copyright (c) 2025  Po-Kang Tsai
 #  Licensed under the Apache License, Version 2.0
 # ---------------------------------------------------------------------
 #  ENV MIMIC_IV_DATA   → root of MIMIC-IV (contains /hosp, /icu, /core)
