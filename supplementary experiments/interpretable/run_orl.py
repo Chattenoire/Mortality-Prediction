@@ -1,17 +1,12 @@
-#!/usr/bin/env python
 """
-Optimal Rule List baseline (works with imodels ≤ 1.x and corels ≤ 0.0.7).
-
-Fixes the       ValueError: The truth value of an array with more than one
-element is ambiguous …  by patching corels.CorelsClassifier.fit so it
-casts any ndarray 'features' back to a plain list.
+Optimal Rule List baseline
 """
 
 import os, json, yaml, joblib, pandas as pd
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit, ParameterGrid
 from sklearn.metrics import roc_auc_score
 from imodels import OptimalRuleListClassifier
-import numpy as np, corels   # ← needed for the patch
+import numpy as np, corels
 from utils import rule_stats
 
 # warning suppression
@@ -31,7 +26,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 # ─── monkey-patch corels -----------------------------------------------------
 _orig_fit = corels.CorelsClassifier.fit
 def _safe_fit(self, X, y, *, features=None, prediction_name='outcome'):
-    if isinstance(features, np.ndarray):            # turn array → list
+    if isinstance(features, np.ndarray):
         features = features.tolist()
     return _orig_fit(self, X, y,
                      features=features,
@@ -62,8 +57,8 @@ best, best_auc = None, 0.0
 
 for params in grid:
     mdl = OptimalRuleListClassifier(random_state=cfg["seed"], verbosity=["progress"], **params)
-    Xtr, Xval = X_tr.values, X_val.values  # pandas → ndarray
-    mdl.fit(Xtr, y_tr, feature_names=X_all.columns.tolist())  # list is now safe
+    Xtr, Xval = X_tr.values, X_val.values
+    mdl.fit(Xtr, y_tr, feature_names=X_all.columns.tolist())
     auc = roc_auc_score(y_val, mdl.predict_proba(Xval)[:, 1])
     print(f"  grid {params}  val-AUC {auc:.3f}")
     if auc > best_auc:
