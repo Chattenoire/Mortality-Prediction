@@ -4,7 +4,7 @@ import numpy as np
 from scipy.stats import linregress
 
 # ------------------------------
-# Define Paths (adjust as needed)
+# Define Paths
 # ------------------------------
 BASE_DIR = r"C:\Graduation Project\dataset\mimic-iv"
 HOSP_DIR = os.path.join(BASE_DIR, "hosp")
@@ -30,7 +30,7 @@ def compute_slope(group, value_col, time_col):
     """
     # Ensure the group is sorted by the time column
     group = group.sort_values(time_col)
-    # Convert time column to datetime and calculate hours since ICU admission (assumes hours_since_intime already exists)
+    # Convert time column to datetime and calculate hours since ICU admission
     hours = group['hours_since_intime']
     values = group[value_col].astype(float)
     
@@ -41,7 +41,6 @@ def compute_slope(group, value_col, time_col):
         slope, _, _, _, _ = linregress(hours, values)
         return slope
     except Exception as e:
-        # In case any error occurs (should be rare), return 0.0
         return 0.0
 
 # ------------------------------
@@ -52,10 +51,6 @@ labevents = pd.read_csv(LABEVENTS_FILE, compression='gzip')
 
 # Before computing slopes, ensure that 'charttime' is converted to datetime.
 labevents['charttime'] = pd.to_datetime(labevents['charttime'])
-
-# For demonstration purposes, we assume that the ICU admission time ('intime')
-# is not directly available in the labevents file.
-# Here, we approximate 'intime' as the earliest charttime per hospital admission.
 labevents['intime'] = labevents.groupby('hadm_id')['charttime'].transform('min')
 # Compute hours since ICU admission
 labevents['hours_since_intime'] = (labevents['charttime'] - labevents['intime']).dt.total_seconds() / 3600.0
@@ -63,9 +58,9 @@ labevents['hours_since_intime'] = (labevents['charttime'] - labevents['intime'])
 # Function to compute slopes for a given lab type
 def compute_lab_slope(lab_itemids, value_name):
     lab_events = labevents[labevents["itemid"].isin(lab_itemids)].copy()
-    # Drop rows without necessary time or value information.
+    # Drop rows without necessary time or value information
     lab_events.dropna(subset=["charttime", "valuenum", "hours_since_intime"], inplace=True)
-    # Group by hadm_id and compute slope for each group.
+    # Group by hadm_id and compute slope for each group
     slopes = lab_events.groupby("hadm_id").apply(
         lambda g: compute_slope(g, "valuenum", "charttime")
     ).reset_index(name=f"{value_name}_slope")
