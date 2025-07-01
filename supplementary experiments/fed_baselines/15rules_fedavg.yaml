@@ -1,4 +1,3 @@
-# 15rules_fedavg.yaml
 defaults: []
 seed: 42
 algorithm: FedAvg
