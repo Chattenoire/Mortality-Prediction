@@ -1,5 +1,4 @@
-# configs/15rules_fedprox.yaml
-seed: 42               # <-- add this line
+seed: 42
 defaults: [15rules_fedavg]
 algorithm: FedProx
 mu: 0.01
