@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Summarises the rule-length × rule-count sweep, runs two-way ANOVA,
 and emits:  (1) LaTeX-ready result tables   (2) a heat-map figure.
@@ -29,14 +28,13 @@ df.to_csv(OUT / "rule_grid_raw.csv", index=False)
 for metric in ["auc", "brier", "ece"]:
     pivot = df.pivot(index="k", columns="R", values=metric)
     pivot.to_csv(OUT / f"{metric}_table.csv")
-    # also LaTeX (midrule, booktabs style)
     pivot.to_latex(OUT / f"{metric}_table.tex",
                    float_format="%.4f", bold_rows=True,
                    caption=f"{metric.upper()} for every (k,R) pair.",
                    label=f"tab:{metric}_rule_grid")
 
 # --------------------------------------------------------------------------- #
-# 4) Figure 3 – AUROC heat-map (matches paper)
+# 4) Figure 3 – AUROC heat-map
 # --------------------------------------------------------------------------- #
 auroc = df.pivot(index="k", columns="R", values="auc")
 fig, ax = plt.subplots(figsize=(6, 4))
