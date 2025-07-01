@@ -1,0 +1,8 @@
+# ---- grid definition + Hydra override --------------------------------------
+defaults:
+  - base
+
+sweep:
+  _target_: itertools.product
+  k: [2, 3, 4, 5]               # max_antecedents
+  R: [10, 25, 40]               # n_rules

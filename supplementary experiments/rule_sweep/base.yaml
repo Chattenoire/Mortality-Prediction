@@ -1,0 +1,37 @@
+# ---- shared defaults -------------------------------------------------------
+seed: 42
+
+dataset:
+  # use quotes and either double backslashes or forward slashes
+  path: "C:\\Graduation Project\\dataset\\preprocessed_data_enriched.pkl"
+  client_splits: "data/client_splits.json"
+
+federated:
+  method: FedAvg
+  rounds: 200                      # keep same as main study
+  clients_per_round: 5
+
+model:
+  gru_units: 224
+  dropout: 0.2
+  lambda_val: 12.5                 # soft-min temperature
+
+optimiser:
+  name: Adam
+  lr: 1.8e-3
+
+training:
+  batch_size: 32
+  pos_weight: 3.65
+  neg_weight: 0.58
+  early_stopping:
+    monitor: val_auc
+    patience: 15
+    min_delta: 0.001
+
+evaluation:
+  n_bins_ece: 15                   # finer for journal plot
+
+logging:
+  project: "rule_length_sweep"
+  entity: "your-wandb-team"
