@@ -1,4 +1,3 @@
-# fed_baselines/aggregators.py   ──  OOM-safe, subclass-safe
 import tensorflow as tf
 from copy import deepcopy
 
@@ -25,10 +24,6 @@ class BaseAggregator:
         self.mu = mu                    # FedProx
         self.c = None                   # SCAFFOLD control variate
 
-        # Build once with real dims (call done in run_federated.py)
-        # _ = self.global_model((ts_sample, static_sample))
-
-        # Compile **once** for FedAvg; others define opt/graph below
         self.global_model.compile(
             optimizer=tf.keras.optimizers.Adam(self.client_lr),
             loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
@@ -46,7 +41,6 @@ class FedAvgAggregator(BaseAggregator):
     def client_update(self, client_ds):
         orig = copy_weights(self.global_model.get_weights())
 
-        # One local epoch via train_on_batch (reuses compiled graph)
         for (xt, xs), y in client_ds:
             self.global_model.train_on_batch((xt, xs), y, reset_metrics=False)
 
@@ -71,7 +65,6 @@ class FedProxAggregator(BaseAggregator):
 
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
-        # optimiser & traced step allocated ONCE
         self.opt = tf.keras.optimizers.Adam(self.client_lr)
 
         @tf.function
@@ -98,7 +91,6 @@ class FedProxAggregator(BaseAggregator):
         self.global_model.set_weights(orig)
         return delta, self._count_examples(client_ds)
 
-    # server_update identical to FedAvg
     server_update = FedAvgAggregator.server_update
 
 
