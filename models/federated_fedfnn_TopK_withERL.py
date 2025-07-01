@@ -362,7 +362,7 @@ def interpret_fuzzy_rules(model, rule_feature_names, top_features=None):
 # ------------------------------
 def main():
     # Load enriched data
-    data_path = r"C:\Graduation Project\dataset\preprocessed_data_enriched.pkl"
+    data_path = r"PATH_TO_FILE\preprocessed_data_enriched.pkl"
     with open(data_path, "rb") as f:
         preprocessed = pickle.load(f)
 
@@ -467,7 +467,7 @@ def main():
     print("AUC over time plot saved as 'auc_over_time.png'")
 
     # Save the trained model
-    model_save_path = r"C:\Graduation Project\saved models\federated_fedfnn_withERL_topK"
+    model_save_path = r"PATH_TO_FILE\federated_fedfnn_withERL_topK"
     os.makedirs(os.path.dirname(model_save_path), exist_ok=True)
     global_model.save(model_save_path, save_format="tf")
     print(f"Model saved to: {model_save_path}")
