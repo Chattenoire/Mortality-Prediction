@@ -1,10 +1,7 @@
-#!/usr/bin/env python
 """
 Lightweight grid launcher for FedProx and SCAFFOLD.
-Usage examples
-  python sweep_grid.py configs/fedprox_grid.yaml
-  python sweep_grid.py configs/scaffold_grid.yaml
 """
+
 import itertools, subprocess, yaml, pathlib, sys, tempfile, copy
 
 def merge_dicts(parent, child):
@@ -33,8 +30,8 @@ def expand_grid(grid_cfg_path):
             tag.append(f"{k}{v}")
         
         if cfg["algorithm"] == "SCAFFOLD":
-            cfg["client_lr"] = cfg.pop("lr")     # remove 'lr'…
-            cfg["server_lr"] = cfg["client_lr"]  # …and copy to both fields
+            cfg["client_lr"] = cfg.pop("lr")
+            cfg["server_lr"] = cfg["client_lr"]
         
         yield cfg, "_".join(tag)
 
@@ -47,7 +44,7 @@ def run(grid_cfg):
             cmd = [sys.executable,
                    "run_federated.py",
                    "--config", tmp.name,
-                   "--out",   str(out_dir)]        # ← cast Path to str
+                   "--out",   str(out_dir)]
             print("🚀", " ".join(cmd))
             subprocess.run(cmd, check=True)
             try:
