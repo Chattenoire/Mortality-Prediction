@@ -1,8 +1,6 @@
-#!/usr/bin/env python
-# analysis/select_best_hparams.py
 import json, glob, re, pathlib, pandas as pd
 
-ROOT = pathlib.Path("../outputs")        # adjust if needed
+ROOT = pathlib.Path("../outputs")
 records = []
 
 for j in glob.glob(str(ROOT/"FedProx_mu*"/"metrics.json")):
