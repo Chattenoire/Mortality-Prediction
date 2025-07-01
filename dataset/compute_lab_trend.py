@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------
 #  FedFNN-ERL – Compute lab-value slopes (trends)
-#  Copyright (c) 2024  Po-Kang Tsai & Wen-June Wang
+#  Copyright (c) 2025  Po-Kang Tsai
 #  Licensed under the Apache License, Version 2.0
 # ---------------------------------------------------------------------
 #  Requires:  ENV MIMIC_IV_DATA  → root directory that contains /hosp
