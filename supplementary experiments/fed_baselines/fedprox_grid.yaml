@@ -1,4 +1,4 @@
-defaults: [sweepwin_fedavg.yaml]      # or 15-rule file if you prefer
+defaults: [sweepwin_fedavg.yaml]
 algorithm: FedProx
 grid:
   mu: [0.001, 0.01, 0.05]
