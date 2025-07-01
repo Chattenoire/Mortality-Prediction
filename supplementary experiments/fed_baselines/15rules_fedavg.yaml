@@ -3,7 +3,7 @@ defaults: []
 seed: 42
 algorithm: FedAvg
 num_clients: 5
-num_rules: 15        # <- unchanged legacy model
+num_rules: 15
 training:
   batch_size: 32
   client_lr: 1.8e-3
