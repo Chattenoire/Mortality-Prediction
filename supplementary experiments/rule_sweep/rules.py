@@ -13,9 +13,7 @@ class RuleBase(tf.keras.layers.Layer):
         self.lam = lam
 
         self.m     = tf.Variable(tf.zeros(input_dim), name="centres")
-        # ------- NEW: sigma is always positive --------------------
         self._sigma_raw = tf.Variable(tf.ones(input_dim), name="sigma_raw")
-        # ----------------------------------------------------------
         self.theta = self.add_weight(
             shape=(input_dim + 1, 1), initializer="glorot_uniform", name="consequent"
         )
@@ -23,7 +21,7 @@ class RuleBase(tf.keras.layers.Layer):
     def call(self, x):
         masked_x = x * self.mask
 
-        sigma = tf.nn.softplus(self._sigma_raw) + 1e-6   # > 0 for sure
+        sigma = tf.nn.softplus(self._sigma_raw) + 1e-6
         mu    = 1. - tf.abs(masked_x - self.m) / sigma
         mu    = tf.maximum(mu, 0.) * self.mask
 
